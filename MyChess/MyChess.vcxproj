@@ -272,7 +272,8 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="App.cpp" />
+    <ClCompile Include="entry.cpp" />
+    <ClCompile Include="MainWnd.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -281,9 +282,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="flash10a.tlh" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="MainWnd.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
