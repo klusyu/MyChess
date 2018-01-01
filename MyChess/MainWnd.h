@@ -1,4 +1,5 @@
 #pragma once
+#include "CChess.h"
 
 class CMainWnd : public WindowImplBase
 {
@@ -36,6 +37,8 @@ public:
 
 
 public:
-	CPaintManagerUI m_pm;
+	CPaintManagerUI m_PaintManager;
 	LRESULT lRes = 0;
+private:
+	CChess *m_pChess;
 };

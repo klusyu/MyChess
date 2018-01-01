@@ -272,6 +272,8 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CChess.cpp" />
+    <ClCompile Include="CChineseChess.cpp" />
     <ClCompile Include="entry.cpp" />
     <ClCompile Include="MainWnd.cpp" />
     <ClCompile Include="StdAfx.cpp">
@@ -282,6 +284,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CChess.h" />
+    <ClInclude Include="CChineseChess.h" />
+    <ClInclude Include="defines.h" />
     <ClInclude Include="MainWnd.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>

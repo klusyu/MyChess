@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "MainWnd.h"
-
+#include "CChineseChess.h"
 
 CMainWnd::CMainWnd()
 {
@@ -33,7 +33,8 @@ void CMainWnd::OnFinalMessage(HWND /*hWnd*/)
 
 void CMainWnd::Init()
 {
-
+	m_pChess = new CChineseChess();
+	m_pChess->DrawBoardPieces(m_PaintManager);
 }
 
 void CMainWnd::Notify(TNotifyUI& msg)
@@ -56,6 +57,10 @@ void CMainWnd::Notify(TNotifyUI& msg)
 			SendMessage(WM_SYSCOMMAND, SC_RESTORE, 0);
 			return;
 		}
+		else if (controlName.Find(_T("PicBtn")) >= 0) {
+			m_pChess->ChoosePiece(controlName);
+			return;
+		}
 	}
 }
 
@@ -65,12 +70,12 @@ LRESULT CMainWnd::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	styleValue &= ~WS_CAPTION;
 	::SetWindowLong(*this, GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 
-	m_pm.Init(m_hWnd);
+	m_PaintManager.Init(m_hWnd);
 	CDialogBuilder builder;
-	CControlUI* pRoot = builder.Create(GetSkinFile().GetData(), (UINT)0, NULL, &m_pm);
+	CControlUI* pRoot = builder.Create(GetSkinFile().GetData(), (UINT)0, NULL, &m_PaintManager);
 	ASSERT(pRoot && "Failed to parse XML");
-	m_pm.AttachDialog(pRoot);
-	m_pm.AddNotifier(this);
+	m_PaintManager.AttachDialog(pRoot);
+	m_PaintManager.AddNotifier(this);
 
 	Init();
 	return 0;
@@ -108,10 +113,10 @@ LRESULT CMainWnd::OnNcHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 	RECT rcClient;
 	::GetClientRect(*this, &rcClient);
 
-	RECT rcCaption = m_pm.GetCaptionRect();
+	RECT rcCaption = m_PaintManager.GetCaptionRect();
 	if (pt.x >= rcClient.left + rcCaption.left && pt.x < rcClient.right - rcCaption.right \
 		&& pt.y >= rcCaption.top && pt.y < rcCaption.bottom) {
-		CControlUI* pControl = static_cast<CControlUI*>(m_pm.FindControl(pt));
+		CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(pt));
 		if (pControl && _tcscmp(pControl->GetClass(), DUI_CTR_BUTTON) != 0)
 			return HTCAPTION;
 	}
@@ -121,7 +126,7 @@ LRESULT CMainWnd::OnNcHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 
 LRESULT CMainWnd::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	SIZE szRoundCorner = m_pm.GetRoundCorner();
+	SIZE szRoundCorner = m_PaintManager.GetRoundCorner();
 	if (!::IsIconic(*this) && (szRoundCorner.cx != 0 || szRoundCorner.cy != 0)) {
 		CDuiRect rcWnd;
 		::GetWindowRect(*this, &rcWnd);
@@ -153,7 +158,7 @@ LRESULT CMainWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		bHandled = FALSE;
 	}
 	if (bHandled) return lRes;
-	if (m_pm.MessageHandler(uMsg, wParam, lParam, lRes)) return lRes;
+	if (m_PaintManager.MessageHandler(uMsg, wParam, lParam, lRes)) return lRes;
 	return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
 }
 
@@ -169,15 +174,15 @@ LRESULT CMainWnd::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL & b
 	LRESULT lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
 	if (::IsZoomed(*this) != bZoomed) {
 		if (!bZoomed) {
-			CControlUI* pControl = static_cast<CControlUI*>(m_pm.FindControl(_T("maxbtn")));
+			CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("maxbtn")));
 			if (pControl) pControl->SetVisible(false);
-			pControl = static_cast<CControlUI*>(m_pm.FindControl(_T("restorebtn")));
+			pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("restorebtn")));
 			if (pControl) pControl->SetVisible(true);
 		}
 		else {
-			CControlUI* pControl = static_cast<CControlUI*>(m_pm.FindControl(_T("maxbtn")));
+			CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("maxbtn")));
 			if (pControl) pControl->SetVisible(true);
-			pControl = static_cast<CControlUI*>(m_pm.FindControl(_T("restorebtn")));
+			pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("restorebtn")));
 			if (pControl) pControl->SetVisible(false);
 		}
 	}

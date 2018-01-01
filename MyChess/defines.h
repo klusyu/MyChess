@@ -8,5 +8,3 @@ class Chesspieces
 	ePlayer player;
 	ePiecesType type;
 };
-
-
